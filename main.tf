@@ -80,7 +80,7 @@ resource "azurerm_network_security_group" "developmentnsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = var.source_ip_prefix
+    source_address_prefix      = data.http.my_ip.response_body
     destination_address_prefix = "*"
   }
 
@@ -92,7 +92,7 @@ resource "azurerm_network_security_group" "developmentnsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "80"
-    source_address_prefix      = var.source_ip_prefix
+    source_address_prefix      = data.http.my_ip.response_body
     destination_address_prefix = "*"
   }
 
@@ -104,7 +104,7 @@ resource "azurerm_network_security_group" "developmentnsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = var.source_ip_prefix
+    source_address_prefix      = data.http.my_ip.response_body
     destination_address_prefix = "*"
   }
 

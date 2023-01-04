@@ -1,4 +1,4 @@
-output "public_id" {
+output "public_ip_id" {
   description = "The public ip address id."
   value       = azurerm_public_ip.publicip.id
 }
@@ -6,10 +6,10 @@ output "public_fqdn" {
   description = "The fqdn of the network."
   value       = azurerm_public_ip.publicip.fqdn
 }
-# output "availability_zone_ip_address" {
-#   description = "The availability zone of the public ip address"
-#   value       = azurerm_public_ip.developmentpublicip.availability_zone
-# }
+output "source_ip_address" {
+  description = "Source ip address allow for security group"
+  value       = data.http.my_ip.response_body
+}
 
 # output "vmnic_id" {
 #   description = ""
