@@ -1,3 +1,6 @@
+##################################################################################
+# CONFIGURATION
+##################################################################################
 terraform {
   required_providers {
     azurerm = {
@@ -5,8 +8,14 @@ terraform {
       version = "=3.37.0"
     }
   }
+  backend "azurerm" {
+    key = "networking/vpc.tfstate"
+  }
 }
 
+##################################################################################
+# PROVIDERS
+##################################################################################
 provider "azurerm" {
   features {}
 }
@@ -23,26 +32,44 @@ provider "azurerm" {
 # }
 
 # Define resource group
+##################################################################################
+# LOCALS
+##################################################################################
+locals {
+  environment = terraform.workspace
+  source_ip_prefix = "$(data.http.my_ip.response_body)"
+}
+##################################################################################
+# RESOURCES
+##################################################################################
 resource "azurerm_resource_group" "rg-base" {
-  name     = join("-", [var.resource_group_name_prefix, var.environment])
+  name     = join("-", ["rg", var.common_name, local.environment])
   location = var.region
 
-  tags = var.common_tags
+  tags = merge(var.common_tags,
+    {
+      environment = terraform.workspace
+    }
+  )
 }
 
 # Create virtual network
 resource "azurerm_virtual_network" "developmentnetwork" {
-  name                = join("-", [var.network_name_prefix, var.environment])
+  name                = join("-", ["vpc", var.common_name, var.environment])
   address_space       = var.vpcnetwork
   location            = var.region
   resource_group_name = azurerm_resource_group.rg-base.name
 
-  tags = var.common_tags
+  tags = merge(var.common_tags,
+    {
+      environment = terraform.workspace
+    }
+  )
 }
 
 # Create subnet
 resource "azurerm_subnet" "publicsubnet" {
-  name                 = join("-", [var.public_subnet_name_prefix, var.environment])
+  name                 = join("-", ["subnet", "public", var.common_name, var.environment])
   resource_group_name  = azurerm_resource_group.rg-base.name
   virtual_network_name = azurerm_virtual_network.developmentnetwork.name
   address_prefixes     = var.publicsubnet
@@ -50,7 +77,7 @@ resource "azurerm_subnet" "publicsubnet" {
 
 # Create subnet
 resource "azurerm_subnet" "privatesubnet" {
-  name                 = join("-", [var.private_subnet_name_prefix, var.environment])
+  name                 = join("-", ["subnet", "private", var.common_name, var.environment])
   resource_group_name  = azurerm_resource_group.rg-base.name
   virtual_network_name = azurerm_virtual_network.developmentnetwork.name
   address_prefixes     = var.privatesubnet
@@ -58,17 +85,21 @@ resource "azurerm_subnet" "privatesubnet" {
 
 # Create public IPs
 resource "azurerm_public_ip" "publicip" {
-  name                = join("-", [var.public-ip-name_prefix, var.environment])
+  name                = join("-", ["pip", var.common_name, var.environment])
   location            = var.region
   resource_group_name = azurerm_resource_group.rg-base.name
   allocation_method   = "Dynamic"
 
-  tags = var.common_tags
+  tags = merge(var.common_tags,
+    {
+      environment = terraform.workspace
+    }
+  )
 }
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "developmentnsg" {
-  name                = join("-", [var.security_group_name_prefix, var.environment])
+  name                = join("-", ["sg", var.common_name, var.environment])
   location            = var.region
   resource_group_name = azurerm_resource_group.rg-base.name
 
@@ -80,7 +111,7 @@ resource "azurerm_network_security_group" "developmentnsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = data.http.my_ip.response_body
+    source_address_prefix      = local.source_ip_prefix
     destination_address_prefix = "*"
   }
 
@@ -92,7 +123,7 @@ resource "azurerm_network_security_group" "developmentnsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "80"
-    source_address_prefix      = data.http.my_ip.response_body
+    source_address_prefix      = local.source_ip_prefix
     destination_address_prefix = "*"
   }
 
@@ -104,20 +135,13 @@ resource "azurerm_network_security_group" "developmentnsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = data.http.my_ip.response_body
+    source_address_prefix      = local.source_ip_prefix
     destination_address_prefix = "*"
   }
 
-  tags = var.common_tags
+  tags = merge(var.common_tags,
+    {
+      environment = terraform.workspace
+    }
+  )
 }
-
-# Create public ip
-# resource "azurerm_public_ip" "developmentpublicip" {
-#   name                = "developmentPublicIp"
-#   resource_group_name = azurerm_resource_group.rg-base.name
-#   location            = azurerm_resource_group.rg-base.location
-#   allocation_method   = "Static"
-
-#   tags = var.common_tags
-
-# }
