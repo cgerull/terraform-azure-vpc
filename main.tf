@@ -36,8 +36,8 @@ provider "azurerm" {
 # LOCALS
 ##################################################################################
 locals {
-  environment = terraform.workspace
-  source_ip_prefix = "$(data.http.my_ip.response_body)"
+  environment      = terraform.workspace
+  source_ip_prefix = data.http.my_ip.response_body
 }
 ##################################################################################
 # RESOURCES
@@ -98,7 +98,7 @@ resource "azurerm_public_ip" "publicip" {
 }
 
 # Create Network Security Group and rule
-resource "azurerm_network_security_group" "developmentnsg" {
+resource "azurerm_network_security_group" "nsg" {
   name                = join("-", ["sg", var.common_name, var.environment])
   location            = var.region
   resource_group_name = azurerm_resource_group.rg-base.name

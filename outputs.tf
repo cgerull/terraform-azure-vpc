@@ -32,7 +32,7 @@ output "subnet_id" {
 
 output "security_group_id" {
   description = "Network security group id"
-  value       = azurerm_network_security_group.developmentnsg.id
+  value       = azurerm_network_security_group.nsg.id
 }
 
 output "resource_group_name" {

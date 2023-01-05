@@ -34,13 +34,13 @@ variable "common_tags" {
 }
 variable "resource_group_name" {
   description = "Resource group for state file data."
-  type = string
+  type        = string
 }
 variable "storage_account_name" {
   description = "Storage account for state file data."
-  type = string
+  type        = string
 }
 variable "container_name" {
   description = "Container name for state file data."
-  type = string
+  type        = string
 }
