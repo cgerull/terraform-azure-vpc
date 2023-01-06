@@ -1,7 +1,6 @@
 ##################################################################################
 # OUTPUT
 ##################################################################################
-
 output "public_ip_id" {
   description = "The public ip address id."
   value       = azurerm_public_ip.publicip.id
