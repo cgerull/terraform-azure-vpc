@@ -32,15 +32,15 @@ variable "common_tags" {
   description = "Common tags"
   type        = map(any)
 }
-variable "resource_group_name" {
+variable "state_backend_resource_group_name" {
   description = "Resource group for state file data."
   type        = string
 }
-variable "storage_account_name" {
+variable "state_backend_storage_account_name" {
   description = "Storage account for state file data."
   type        = string
 }
-variable "container_name" {
+variable "state_backend_container_name" {
   description = "Container name for state file data."
   type        = string
 }
