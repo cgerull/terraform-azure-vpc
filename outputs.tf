@@ -19,11 +19,15 @@ output "source_ip_address" {
 #   value       = azurerm_network_interface.vmnic.id
 # }
 
-output "subnet_id" {
+output "public_subnet_id" {
   description = "VPC public subnet id"
   value       = azurerm_subnet.publicsubnet.id
 }
 
+output "private_subnet_id" {
+  description = "VPC private subnet id"
+  value       = azurerm_subnet.privatesubnet.id
+}
 # output "public_ip_id" {
 #   description = "Public IP address id"
 #   value       = azurerm_public_ip.developmentpublicip.id

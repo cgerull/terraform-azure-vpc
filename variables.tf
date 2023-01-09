@@ -14,7 +14,7 @@ variable "environment" {
 variable "common_name" {
   description = "Common part of all resource names, eq. organisation or project."
   type        = string
-  default     = "generic"
+  default     = "networking"
 }
 variable "vpcnetwork" {
   description = "VPC network"
