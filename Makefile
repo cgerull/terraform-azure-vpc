@@ -7,7 +7,7 @@ docs:
 	terraform-docs markdown table --output-file README.md --output-mode inject .
 
 init:
-	terraform init -backend-config=../global/backend/backend.hcl
+	terraform init -backend-config=../global/backend/backend.hcl -upgrade
 fmt:
 	terraform fmt
 
@@ -25,6 +25,10 @@ apply: vpc.plan
 	rm vpc.plan
 
 destroy:
-	terraform plan -var-file=../global/backend/backend.hcl -var-file=local.tfvars -destroy -out vpc.plan
+	terraform plan \
+	-var-file=../global/backend/backend.hcl \
+	-var-file=$(config_file) \
+	-destroy \
+	-out vpc.plan
 	terraform apply "vpc.plan"
 	rm vpc.plan
